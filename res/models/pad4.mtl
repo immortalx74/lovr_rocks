@@ -1,0 +1,16 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl M_0120_Orchid
+Ka 0.000000 0.000000 0.000000
+Kd 0.862745 0.435294 0.686275
+Ks 0.330000 0.330000 0.330000
+map_Kd pad4/M_0120_Orchid.png
+
+newmtl M_0097_DeepSkyBlue
+Ka 0.000000 0.000000 0.000000
+Kd 0.301961 0.701961 0.882353
+Ks 0.330000 0.330000 0.330000
+map_Kd pad4/M_0097_DeepSkyBlue.png
+

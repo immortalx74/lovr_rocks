@@ -1,0 +1,33 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl Metal_Rough
+Ka 0.000000 0.000000 0.000000
+Kd 0.223529 0.105882 0.019608
+Ks 0.330000 0.330000 0.330000
+map_Kd drum_top/Metal_Rough.png
+
+newmtl Aluminum
+Ka 0.000000 0.000000 0.000000
+Kd 0.752941 0.792157 0.866667
+Ks 0.330000 0.330000 0.330000
+map_Kd drum_top/Aluminum.png
+
+newmtl Metal_Aluminum_Anodized
+Ka 0.000000 0.000000 0.000000
+Kd 0.909804 0.556863 0.109804
+Ks 0.330000 0.330000 0.330000
+map_Kd drum_top/Metal_Aluminum_Anodized.png
+
+newmtl Metal_Embossed
+Ka 0.000000 0.000000 0.000000
+Kd 0.639216 0.337255 0.062745
+Ks 0.330000 0.330000 0.330000
+map_Kd drum_top/Metal_Embossed.png
+
+newmtl FrontColor
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.330000 0.330000 0.330000
+

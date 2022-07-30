@@ -1,0 +1,34 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl _Wood_Bamboo_1
+Ka 0.000000 0.000000 0.000000
+Kd 0.752941 0.792157 0.866667
+Ks 0.330000 0.330000 0.330000
+map_Kd hammer/_Wood_Bamboo_1.png
+
+newmtl Metal_Embossed
+Ka 0.000000 0.000000 0.000000
+Kd 0.580392 0.564706 0.780392
+Ks 0.330000 0.330000 0.330000
+map_Kd hammer/Metal_Embossed.png
+
+newmtl Metal_Aluminum_Anodized
+Ka 0.000000 0.000000 0.000000
+Kd 0.223529 0.105882 0.019608
+Ks 0.330000 0.330000 0.330000
+map_Kd hammer/Metal_Aluminum_Anodized.png
+
+newmtl Metal_Rough
+Ka 0.000000 0.000000 0.000000
+Kd 0.909804 0.556863 0.109804
+Ks 0.330000 0.330000 0.330000
+map_Kd hammer/Metal_Rough.png
+
+newmtl _
+Ka 0.000000 0.000000 0.000000
+Kd 0.639216 0.337255 0.062745
+Ks 0.330000 0.330000 0.330000
+map_Kd hammer/_.png
+
