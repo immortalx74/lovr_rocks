@@ -102,8 +102,10 @@ function Util.LoadNotes(dif_filename, major_beat_interv)
 
 	for i, v in ipairs(song_notes_decoded["_notes"]) do
 		local hf = major_beat_interv * v["_time"]
-		local note = { beat_time = v["_time"], hit_frame = hf, spawn_frame = hf - 132300, lane = v["_lineIndex"] + 1 }
+		-- local note = { beat_time = v["_time"], hit_frame = hf, spawn_frame = hf - 132300, lane = v["_lineIndex"] + 1 }
+		local note = { beat_time = v["_time"], hit_frame = hf, spawn_frame = hf - 99225, lane = v["_lineIndex"] + 1 }
 		local row = {}
+		-- (meters x 11025) - 11025
 
 		if prev_time == v["_time"] then
 			note_idx = note_idx + 1

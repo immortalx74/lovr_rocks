@@ -89,8 +89,8 @@ App = {
 	can_hammer_collide = { true, true },
 	song_list = {},
 	drum_anim_state = {},
-	metrics = { hammer_tip_local_y = -0.15, hammer_tip_local_z = -0.37, drums_offset_y = 0, lower_drum_height = 0.32,
-		upper_drum_height = 0.57, drum_collision_radius = 0.235, spawn_distance = 7 },
+	metrics = { hammer_tip_local_y = -0.13, hammer_tip_local_z = -0.35, drums_offset_y = 0, lower_drum_height = 0.32,
+		upper_drum_height = 0.57, drum_collision_radius = 0.205, spawn_distance = 10 },
 	snd_metronome = { source_primary, source_secondary, filename_primary, filename_secondary },
 	snd_bass_drum = { source, filename },
 }
@@ -142,7 +142,7 @@ end
 function App.UpdateNotePositions(cur_audio_frame)
 	for i, row in ipairs(App.visible_rows) do
 		for j, note in ipairs(row) do
-			note.pos_z = ((cur_audio_frame - note.spawn_frame) / 22050) - App.metrics.spawn_distance
+			note.pos_z = ((cur_audio_frame - note.spawn_frame) / 11025) - App.metrics.spawn_distance
 		end
 	end
 end
@@ -306,43 +306,76 @@ function App.HammerDrumCollision(hammer_idx, drum_idx)
 		App.drum_anim_state[drum_idx].y = 0
 		App.drum_anim_state[drum_idx].bounce_dist = vib_strength * 0.007
 
-		return true
+		return true, vib_strength
 	end
 	return false
 end
 
 function App.CollisionHandler()
-	if App.HammerDrumCollision(1, 1) then
+	local hit, strength
+	
+	hit, strength = App.HammerDrumCollision(1, 1)
+	if hit then
+		App.snd_bass_drum.source:setVolume(strength, 'linear')
 		App.snd_bass_drum.source:stop()
 		App.snd_bass_drum.source:play()
+		return
 	end
-	if App.HammerDrumCollision(1, 2) then
+
+	hit, strength = App.HammerDrumCollision(1, 2)
+	if hit then
+		App.snd_bass_drum.source:setVolume(strength, 'linear')
 		App.snd_bass_drum.source:stop()
 		App.snd_bass_drum.source:play()
+		return
 	end
-	if App.HammerDrumCollision(1, 3) then
+
+	hit, strength = App.HammerDrumCollision(1, 3)
+	if hit then
+		App.snd_bass_drum.source:setVolume(strength, 'linear')
 		App.snd_bass_drum.source:stop()
 		App.snd_bass_drum.source:play()
+		return
 	end
-	if App.HammerDrumCollision(1, 4) then
+
+	hit, strength = App.HammerDrumCollision(1, 4)
+	if hit then
+		App.snd_bass_drum.source:setVolume(strength, 'linear')
 		App.snd_bass_drum.source:stop()
 		App.snd_bass_drum.source:play()
+		return
 	end
-	if App.HammerDrumCollision(2, 1) then
+
+	hit, strength = App.HammerDrumCollision(2, 1)
+	if hit then
+		App.snd_bass_drum.source:setVolume(strength, 'linear')
 		App.snd_bass_drum.source:stop()
 		App.snd_bass_drum.source:play()
+		return
 	end
-	if App.HammerDrumCollision(2, 2) then
+
+	hit, strength = App.HammerDrumCollision(2, 2)
+	if hit then
+		App.snd_bass_drum.source:setVolume(strength, 'linear')
 		App.snd_bass_drum.source:stop()
 		App.snd_bass_drum.source:play()
+		return
 	end
-	if App.HammerDrumCollision(2, 3) then
+
+	hit, strength = App.HammerDrumCollision(2, 3)
+	if hit then
+		App.snd_bass_drum.source:setVolume(strength, 'linear')
 		App.snd_bass_drum.source:stop()
 		App.snd_bass_drum.source:play()
+		return
 	end
-	if App.HammerDrumCollision(2, 4) then
+
+	hit, strength = App.HammerDrumCollision(2, 4)
+	if hit then
+		App.snd_bass_drum.source:setVolume(strength, 'linear')
 		App.snd_bass_drum.source:stop()
 		App.snd_bass_drum.source:play()
+		return
 	end
 end
 

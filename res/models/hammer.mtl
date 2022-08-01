@@ -8,23 +8,23 @@ Kd 0.752941 0.792157 0.866667
 Ks 0.330000 0.330000 0.330000
 map_Kd hammer/_Wood_Bamboo_1.png
 
-newmtl Metal_Embossed
+newmtl _Metal_Embossed_1
 Ka 0.000000 0.000000 0.000000
 Kd 0.580392 0.564706 0.780392
 Ks 0.330000 0.330000 0.330000
-map_Kd hammer/Metal_Embossed.png
+map_Kd hammer/_Metal_Embossed_1.png
 
-newmtl Metal_Aluminum_Anodized
+newmtl _Metal_Aluminum_Anodized_1
 Ka 0.000000 0.000000 0.000000
 Kd 0.223529 0.105882 0.019608
 Ks 0.330000 0.330000 0.330000
-map_Kd hammer/Metal_Aluminum_Anodized.png
+map_Kd hammer/_Metal_Aluminum_Anodized_1.png
 
-newmtl Metal_Rough
+newmtl _Metal_Rough_1
 Ka 0.000000 0.000000 0.000000
 Kd 0.909804 0.556863 0.109804
 Ks 0.330000 0.330000 0.330000
-map_Kd hammer/Metal_Rough.png
+map_Kd hammer/_Metal_Rough_1.png
 
 newmtl _
 Ka 0.000000 0.000000 0.000000
