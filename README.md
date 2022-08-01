@@ -1,6 +1,6 @@
 # LÖVR RÖCKS
 
-[![Img alt text](https://img.youtube.com/vi/lvI_ScWK0-U/0.jpg)](https://www.youtube.com/watch?v=lvI_ScWK0-U)<br />
+![lovr_rocks](https://i.imgur.com/vSGFVsM.png)<br />
 NOTE: This is currently WIP<br />
 Experimental Rhythm VR game modelled after the excellent Ragnarock game.<br />
 Made with [LÖVR](https://github.com/bjornbytes/lovr)<br />
