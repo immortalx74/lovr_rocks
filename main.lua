@@ -70,7 +70,15 @@ function lovr.update(dt)
 		App.SpawnNextRow(cur_audio_frame)
 		App.UpdateNotePositions(cur_audio_frame)
 		App.PopRowPastPlayer()
+
+		if lovr.headset.wasPressed(App.hands[1], "thumbstick") then
+			App.song_list[App.cur_song_idx].source:stop()
+			App.game_state = Const.game_state_e.select_song
+			Util.ClearTable(App.visible_rows)
+			App.cur_row_idx = 1
+		end
 	end
+
 
 	App.CollisionHandler()
 	App.AnimateDrums(dt)
@@ -80,19 +88,24 @@ end
 function lovr.draw()
 	lovr.graphics.setShader(App.backshader)
 	lovr.graphics.plane('fill', 0, 0, 0, 25, 25, -math.pi / 2, 1, 0, 0)
-	lovr.graphics.setShader()
 
 	lovr.graphics.setColor(1, 1, 1)
 
 	if App.game_state == Const.game_state_e.select_song then
+		lovr.graphics.setShader()
 		UI.DrawSongList()
+
+		lovr.graphics.setShader(App.shader)
 		App.DrawHammers()
 		App.DrawDrums()
 	elseif App.game_state == Const.game_state_e.select_difficulty then
+		lovr.graphics.setShader()
 		UI.DrawDifficulties()
+		lovr.graphics.setShader(App.shader)
 		App.DrawHammers()
 		App.DrawDrums()
 	elseif App.game_state == Const.game_state_e.play_song then
+		lovr.graphics.setShader(App.shader)
 		App.DrawHammers()
 		App.DrawDrums()
 		App.DrawNotes()

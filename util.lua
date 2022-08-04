@@ -20,6 +20,16 @@ function Util.PointInCircle(px, py, cx, cy, cr)
 	return false
 end
 
+function Util.PointInRect(px, py, rx, ry, rw, rh)
+	if px >= (rx - rw / 2) and px <= (rx + rw / 2) then
+		if py >= (ry - rh / 2) and py <= (ry + rh / 2) then
+			return true
+		end
+	end
+
+	return false
+end
+
 function Util.MapRange(from_min, from_max, to_min, to_max, v)
 	return (v - from_min) * (to_max - to_min) / (from_max - from_min) + to_min
 end
@@ -38,6 +48,12 @@ end
 
 function Util.Norm01(x, min, max)
 	return (x - min) / (max - min)
+end
+
+function Util.ClearTable(t)
+	for i, v in ipairs(t) do
+		t[i] = nil
+	end
 end
 
 function Util.LoadSongList()

@@ -76,6 +76,7 @@ App = {
 	shader,
 	backshader,
 	mdl_hammer,
+	mdl_pad_broken,
 	mdl_pad1, mdl_pad2, mdl_pad3, mdl_pad4,
 	mdl_drum_bottom, mdl_drum_top,
 	cur_row_idx = 1,
@@ -93,6 +94,7 @@ App = {
 		upper_drum_height = 0.57, drum_collision_radius = 0.205, spawn_distance = 10 },
 	snd_metronome = { source_primary, source_secondary, filename_primary, filename_secondary },
 	snd_bass_drum = { source, filename },
+	snd_miss = { source, filename }
 }
 
 function App.Init()
@@ -120,6 +122,7 @@ function App.Init()
 	App.mdl_pad4 = lovr.graphics.newModel("res/models/pad4.obj")
 	App.mdl_drum_top = lovr.graphics.newModel("res/models/drum_top.obj")
 	App.mdl_drum_bottom = lovr.graphics.newModel("res/models/drum_bottom.obj")
+	App.mdl_pad_broken = lovr.graphics.newModel("res/models/pad_broken/pad_broken.gltf")
 
 	-- Load sounds
 	App.snd_metronome.filename_primary = "res/sounds/metronome1.wav"
@@ -129,6 +132,8 @@ function App.Init()
 	App.snd_bass_drum.filename = "res/sounds/bassdrum.wav"
 	App.snd_bass_drum.source = lovr.audio.newSource(App.snd_bass_drum.filename)
 	App.snd_bass_drum.source:setVolume(1, 'linear')
+	App.snd_miss.filename = "res/sounds/miss.wav"
+	App.snd_miss.source = lovr.audio.newSource(App.snd_miss.filename)
 
 	-- Setup UI
 	UI.font = lovr.graphics.newFont("res/DejaVuSansMono.ttf")
@@ -151,7 +156,16 @@ function App.PopRowPastPlayer()
 	-- visible_rows is FIFO, so just check pos_z of first row. If > 0 then pop from stack
 	if #App.visible_rows > 0 then
 		local pos_z = App.visible_rows[1][1].pos_z
-		if pos_z > 0 then
+		if pos_z > -0.4 then
+			local count = #App.visible_rows[1]
+
+			for i = 1, count do
+				if not App.visible_rows[1][i].was_hit then
+					App.snd_miss.source:stop()
+					App.snd_miss.source:play()
+				end
+			end
+
 			table.remove(App.visible_rows, 1)
 		end
 	end
@@ -160,8 +174,12 @@ end
 function App.SpawnNextRow(cur_audio_frame)
 	local cur_row = App.song_list[App.cur_song_idx].difficulties[App.cur_difficulty_idx].rows[App.cur_row_idx]
 
-	-- Die here for now...
+	-- Return to song selection
 	if App.cur_row_idx > #App.song_list[App.cur_song_idx].difficulties[App.cur_difficulty_idx].rows then
+		App.song_list[App.cur_song_idx].source:stop()
+		App.game_state = Const.game_state_e.select_song
+		Util.ClearTable(App.visible_rows)
+		App.cur_row_idx = 1
 		return
 	end
 	local num_notes = #App.song_list[App.cur_song_idx].difficulties[App.cur_difficulty_idx].rows[App.cur_row_idx]
@@ -176,7 +194,7 @@ function App.SpawnNextRow(cur_audio_frame)
 			local n = { pos_z = -App.metrics.spawn_distance,
 				pos_x = leftmost_center + ((cur_row[i].lane - 1) * (2 * App.metrics.drum_collision_radius)),
 				spawn_frame = cur_row[i].spawn_frame,
-				lane = cur_row[i].lane }
+				lane = cur_row[i].lane, was_hit = false, timestamp = lovr.timer.getTime() }
 			notes[#notes + 1] = n
 		end
 
@@ -190,14 +208,20 @@ function App.DrawNotes()
 		for j, note in ipairs(row) do
 			local pad_pos = vec3(note.pos_x,
 				App.metrics.drums_offset_y + App.metrics.lower_drum_height + App.metrics.upper_drum_height, note.pos_z)
-			local mdl = App.mdl_pad4
 
-			if note.lane == 1 then
-				mdl = App.mdl_pad1
-			elseif note.lane == 2 then
-				mdl = App.mdl_pad2
-			elseif note.lane == 3 then
-				mdl = App.mdl_pad3
+			local mdl
+			if note.was_hit then
+				mdl = App.mdl_pad_broken
+				mdl:animate(1, lovr.timer.getTime() - note.timestamp)
+			else
+				mdl = App.mdl_pad4
+				if note.lane == 1 then
+					mdl = App.mdl_pad1
+				elseif note.lane == 2 then
+					mdl = App.mdl_pad2
+				elseif note.lane == 3 then
+					mdl = App.mdl_pad3
+				end
 			end
 
 			mdl:draw(pad_pos, 1, 0, 0, 0)
@@ -244,10 +268,15 @@ function App.DrawDrums()
 		App.mdl_drum_bottom:draw(bottom_drum_pos, 1, 0, 0, 0)
 		App.mdl_drum_top:draw(top_drum_pos.x, top_drum_pos.y + anim_offset, top_drum_pos.z, 1, 0, 0, 0)
 		lovr.graphics.setColor(1, 0, 0)
-		-- lovr.graphics.circle('fill', top_drum_pos.x,
+
+		-- debug draw note collision zones
+		-- local hit_zone_h
+		-- if i == 1 or i == 4 then hit_zone_h = 1.2; end
+		-- if i == 2 or i == 3 then hit_zone_h = 0.8; end
+		-- lovr.graphics.plane("fill", top_drum_pos.x,
 		-- 	App.metrics.drums_offset_y + App.metrics.lower_drum_height + App.metrics.upper_drum_height, top_drum_pos.z,
-		-- 	App.metrics.drum_collision_radius,
-		-- 	1.5708, 1, 0, 0)
+		-- 	(App.metrics.drum_collision_radius * 2) - 0.02, hit_zone_h, 1.5708, 1, 0, 0)
+
 		lovr.graphics.setColor(1, 1, 1)
 		bottom_drum_pos.x = bottom_drum_pos.x + (2 * App.metrics.drum_collision_radius)
 		top_drum_pos.x = top_drum_pos.x + (2 * App.metrics.drum_collision_radius)
@@ -291,14 +320,43 @@ function App.HammerDrumCollision(hammer_idx, drum_idx)
 
 	local is_colliding = false
 
-	if Util.PointInCircle(hammer_x, hammer_z, drum_x, drum_z, App.metrics.drum_collision_radius) then
-		is_colliding = true
+	-- test for note collision inside the bigger zones first
+	if #App.visible_rows > 1 then
+		local hit_zone_h
+		if drum_idx == 1 or drum_idx == 4 then hit_zone_h = 1.2; end
+		if drum_idx == 2 or drum_idx == 3 then hit_zone_h = 0.8; end
+
+		local count = #App.visible_rows
+
+		if Util.PointInRect(hammer_x, hammer_z, drum_x, drum_z, App.metrics.drum_collision_radius * 2, hit_zone_h) then
+			for i = 1, count do
+				local cur_row = App.visible_rows[i]
+
+				for j = 1, #cur_row do
+					if cur_row[j].lane == drum_idx and cur_row[j].pos_z < drum_z + (hit_zone_h / 2) and
+						cur_row[j].pos_z > drum_z - (hit_zone_h / 2) then
+						is_colliding = true
+						
+						if App.can_hammer_collide[hammer_idx] and hammer_y <= drum_y then
+							cur_row[j].was_hit = true
+						end
+					end
+				end
+			end
+		end
+	end
+
+	-- if no note was hit test for regular collision with the drum
+	if is_colliding == false then
+		if Util.PointInCircle(hammer_x, hammer_z, drum_x, drum_z, App.metrics.drum_collision_radius) then
+			is_colliding = true
+		end
 	end
 
 	if App.can_hammer_collide[hammer_idx] and is_colliding and hammer_y <= drum_y then
 		App.can_hammer_collide[hammer_idx] = false
-		local vib_strength = Util.Clamp(Util.MapRange(0, 20, 0, 1, vel), 0, 1)
-		lovr.headset.vibrate(App.hands[hammer_idx], vib_strength, vib_strength * 0.16, 0)
+		local vib_strength = Util.Clamp(Util.MapRange(0, 20, 0.2, 1, vel), 0, 1)
+		lovr.headset.vibrate(App.hands[hammer_idx], vib_strength, vib_strength * 0.2, 0)
 
 		-- Begin drum bounce animation
 		App.drum_anim_state[drum_idx].is_animating = true
@@ -313,7 +371,7 @@ end
 
 function App.CollisionHandler()
 	local hit, strength
-	
+
 	hit, strength = App.HammerDrumCollision(1, 1)
 	if hit then
 		App.snd_bass_drum.source:setVolume(strength, 'linear')
