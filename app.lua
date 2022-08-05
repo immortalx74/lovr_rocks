@@ -82,6 +82,7 @@ App = {
 	cur_row_idx = 1,
 	cur_song_idx = 1,
 	cur_difficulty_idx = 1,
+	last_row_spawned = false,
 	hands = {},
 	hammer_collision_point = {},
 	driver = {},
@@ -168,20 +169,27 @@ function App.PopRowPastPlayer()
 
 			table.remove(App.visible_rows, 1)
 		end
+	else
+		if App.last_row_spawned then
+			-- Wait for song to finish playing, then return to song selection
+			if not App.song_list[App.cur_song_idx].source:isPlaying() then
+				App.song_list[App.cur_song_idx].source:stop()
+				App.game_state = Const.game_state_e.select_song
+				Util.ClearTable(App.visible_rows)
+				App.cur_row_idx = 1
+				App.last_row_spawned = false
+			end
+		end
 	end
 end
 
 function App.SpawnNextRow(cur_audio_frame)
-	local cur_row = App.song_list[App.cur_song_idx].difficulties[App.cur_difficulty_idx].rows[App.cur_row_idx]
-
-	-- Return to song selection
 	if App.cur_row_idx > #App.song_list[App.cur_song_idx].difficulties[App.cur_difficulty_idx].rows then
-		App.song_list[App.cur_song_idx].source:stop()
-		App.game_state = Const.game_state_e.select_song
-		Util.ClearTable(App.visible_rows)
-		App.cur_row_idx = 1
+		App.last_row_spawned = true
 		return
 	end
+
+	local cur_row = App.song_list[App.cur_song_idx].difficulties[App.cur_difficulty_idx].rows[App.cur_row_idx]
 	local num_notes = #App.song_list[App.cur_song_idx].difficulties[App.cur_difficulty_idx].rows[App.cur_row_idx]
 
 	local note = cur_row[1]
@@ -321,7 +329,7 @@ function App.HammerDrumCollision(hammer_idx, drum_idx)
 	local is_colliding = false
 
 	-- test for note collision inside the bigger zones first
-	if #App.visible_rows > 1 then
+	if #App.visible_rows > 0 then
 		local hit_zone_h
 		if drum_idx == 1 or drum_idx == 4 then hit_zone_h = 1.2; end
 		if drum_idx == 2 or drum_idx == 3 then hit_zone_h = 0.8; end
@@ -336,7 +344,7 @@ function App.HammerDrumCollision(hammer_idx, drum_idx)
 					if cur_row[j].lane == drum_idx and cur_row[j].pos_z < drum_z + (hit_zone_h / 2) and
 						cur_row[j].pos_z > drum_z - (hit_zone_h / 2) then
 						is_colliding = true
-						
+
 						if App.can_hammer_collide[hammer_idx] and hammer_y <= drum_y then
 							cur_row[j].was_hit = true
 						end
