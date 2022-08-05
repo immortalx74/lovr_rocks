@@ -202,7 +202,7 @@ function App.SpawnNextRow(cur_audio_frame)
 			local n = { pos_z = -App.metrics.spawn_distance,
 				pos_x = leftmost_center + ((cur_row[i].lane - 1) * (2 * App.metrics.drum_collision_radius)),
 				spawn_frame = cur_row[i].spawn_frame,
-				lane = cur_row[i].lane, was_hit = false, timestamp = lovr.timer.getTime() }
+				lane = cur_row[i].lane, was_hit = false, timestamp = 0 }
 			notes[#notes + 1] = n
 		end
 
@@ -347,6 +347,7 @@ function App.HammerDrumCollision(hammer_idx, drum_idx)
 
 						if App.can_hammer_collide[hammer_idx] and hammer_y <= drum_y then
 							cur_row[j].was_hit = true
+							cur_row[j].timestamp = lovr.timer.getTime()
 						end
 					end
 				end
